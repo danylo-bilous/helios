@@ -28,6 +28,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function HomeLayout() {
+  console.log('layout')
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     Baskerville: LibreBaskerville_400Regular,

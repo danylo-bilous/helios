@@ -35,12 +35,11 @@ const EditorialHeader: React.FC<EditorialHeaderProps> = ({ header, title, subtit
                 <Text style={styles.titleText}>{title}</Text>
                 <Text style={styles.subtitleText}>{subtitle}</Text>
             </View>
-            <ImageBackground
+            {image && <ImageBackground
                 source={{ uri: image || undefined }}
                 style={styles.backgroundImage}
                 resizeMode="cover"
-            >
-            </ImageBackground>
+            />}
         </View>
     );
 };

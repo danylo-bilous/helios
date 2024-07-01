@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Header from "./components/Header"
 import DirectorNote from "./components/DirectorNote"
 import EditorialCard from "./components/EditorialCard"
@@ -10,6 +11,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { useWindowDimensions } from "react-native";
 import type { ICarouselInstance } from "react-native-reanimated-carousel";
 import { getSignedUrl } from '@/s3-utils';
+import CombinedEffect from './components/CombinedEffect';
 
 export default function HomeScreen() {
   const sliderImageList = ['wayward.png', 'finalDemo.jpeg', 'editorial.jpeg']
@@ -83,68 +85,82 @@ export default function HomeScreen() {
     }
   };
   return (
-    <ScrollView style={styles.container}>
-      <Header />
-      <Carousel
-        {...baseOptions}
-        loop={true}
-        ref={ref}
-        style={{ width: "100%" }}
-        autoPlay={false}
-        data={sliderData}
-        pagingEnabled={true}
-        onSnapToItem={index => setActiveIndex(index)}
-        renderItem={({ item }) => (
-          <View style={styles.slide}>
-            {item && <ImageBackground source={{ uri: item }} style={styles.backgroundImage}>
-              <Text style={styles.seriestitle}>MOTION PICTURE SERIES</Text>
-              <Text style={styles.seriesTitle}>Children of the Sea</Text>
-              <View style={styles.contentContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => console.log('click button')}>
-                  <Text style={styles.buttonText}>Go to Episode 1</Text>
-                </TouchableOpacity>
-                <Text style={styles.description}>We venture into sea life on the coasts in India.</Text>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <CombinedEffect>
+          <ScrollView style={styles.container}>
+            <View style={styles.mainContainer}>
+              <Header />
+              <Carousel
+                {...baseOptions}
+                loop={true}
+                ref={ref}
+                style={{ width: "100%" }}
+                autoPlay={false}
+                data={sliderData}
+                pagingEnabled={true}
+                onSnapToItem={index => setActiveIndex(index)}
+                renderItem={({ item }) => (
+                  <View style={styles.slide}>
+                    {item && (
+                      <ImageBackground source={{ uri: item }} style={styles.backgroundImage}>
+                        <Text style={styles.seriestitle}>MOTION PICTURE SERIES</Text>
+                        <Text style={styles.seriesTitle}>Children of the Sea</Text>
+                        <View style={styles.contentContainer}>
+                          <TouchableOpacity style={styles.button} onPress={() => console.log('click button')}>
+                            <Text style={styles.buttonText}>Go to Episode 1</Text>
+                          </TouchableOpacity>
+                          <Text style={styles.description}>We venture into sea life on the coasts in India.</Text>
+                        </View>
+                      </ImageBackground>
+                    )}
+                  </View>
+                )}
+              />
+              <View style={styles.pagination}>
+                {Array.from({ length: totalSlides }).map((_, i) => (
+                  <TouchableOpacity key={i} onPress={() => setActiveIndex(i)}>
+                    <View style={[styles.dot, activeIndex === i && styles.activeDot]} />
+                  </TouchableOpacity>
+                ))}
               </View>
-            </ImageBackground>}
-          </View>
-        )}
-      />
-      <View style={styles.pagination}>
-        {Array.from({ length: totalSlides }).map((_, i) => (
-          <TouchableOpacity key={i} onPress={() => setDots(i)}>
-            <View style={[styles.dot, activeIndex === i && styles.activeDot]} />
-          </TouchableOpacity>
-        ))}
+              <DirectorNote
+                title={'Director’s Note'}
+                content={'I will answer one question - what is the essence of this publication; in other words, the question of what this publication will grow to become.'}
+              />
+              <EditorialCard
+                header={'Editorial'}
+                title={'Directing your First Film'}
+                subtitle={'Written by Arya'}
+                content={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In at nisl sodales, dapibus velit id, convallis risus.'}
+                headerIcon={'pen.png'}
+                contentImage={'demoImage.jpeg'}
+                nextIcon={'next.png'}
+              />
+              <Interviews interviewsData={interviewsData} />
+              <MusicCard
+                header={'Music'}
+                title={'Transcendence'}
+                type={'EXTENDED PLAY'}
+                headerIcon={'piano.png'}
+                contentIcon={'music.png'}
+              />
+              <Footer />
+            </View>
+          </ScrollView>
+        </CombinedEffect>
       </View>
-      <DirectorNote
-        title={'Director’s Note'}
-        content={'I will answer one question - what is the essence of this publication; in other words, the question of what this publication will grow to become.'}
-      />
-      <EditorialCard
-        header={'Editorial'}
-        title={'Directing your First Film'}
-        subtitle={'Written by Arya'}
-        content={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In at nisl sodales, dapibus velit id, convallis risus.'}
-        headerIcon={'pen.png'}
-        contentImage={'demoImage.jpeg'}
-        nextIcon={'next.png'}
-      />
-      <Interviews interviewsData={interviewsData} />
-      <MusicCard
-        header={'Music'}
-        title={'Transcendence'}
-        type={'EXTENDED PLAY'}
-        headerIcon={'piano.png'}
-        contentIcon={'music.png'}
-      />
-      <Footer />
-    </ScrollView>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#1F2327'
+  },
+  mainContainer: {
+    paddingBottom: 200,
   },
   wrapper: {
   },
@@ -231,5 +247,25 @@ const styles = StyleSheet.create({
     marginRight: 7,
     marginTop: 7,
     marginBottom: 7,
+  },
+  circle: {
+    position: 'absolute',
+    bottom: -30,
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0, 0, 255, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circleTouch: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  wave: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
 });
